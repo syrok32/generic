@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from info.views import CourListAPIView, CourCreateAPIView, LessonViewSet, CourRetrieveAPIView, CourDestroyAPIView, \
-    CourUpdateAPIView, PaymentListAPIView
+    CourUpdateAPIView
 
 app_name = 'info'
 
@@ -16,5 +16,4 @@ urlpatterns = [
                   path('cours/<int:pk>/', CourRetrieveAPIView.as_view(), name='cours-det'),
                   path('cours/update/<int:pk>/', CourUpdateAPIView.as_view(), name='cours-det'),
                   path('pay/', PaymentListAPIView.as_view(), name='pay')
-
               ] + router.urls
