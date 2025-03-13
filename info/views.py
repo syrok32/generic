@@ -3,7 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from users.models import Payment
 from info.models import Cours, Lesson
-from info.serializers import LessonSerializer, CoursSerializer, PaymentSerializer
+from info.serializers import LessonSerializer, CoursSerializer
+
 
 # Create your views here.
 class LessonViewSet(viewsets.ModelViewSet):

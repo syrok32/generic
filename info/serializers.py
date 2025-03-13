@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from info.models import Cours, Lesson, Payment
+from info.models import Cours, Lesson
+from users.models import Payment
 
 
 class LessonSerializer(serializers.ModelSerializer):

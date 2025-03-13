@@ -3,8 +3,9 @@ from django_filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 
-from info.models import Payment
+
 from info.serializers import PaymentSerializer
+from users.models import Payment
 
 
 # Create your views here.
