@@ -3,11 +3,12 @@ from rest_framework import serializers
 from info.models import Cours, Lesson
 from users.models import Payment
 
-
+from .validators import YouTubeValidator
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = '__all__'
+        validators = [YouTubeValidator(field='desc')]
 
 
 class CoursSerializer(serializers.ModelSerializer):

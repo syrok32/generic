@@ -34,5 +34,10 @@ class Lesson(models.Model):
         verbose_name = 'урок'
         verbose_name_plural = "уроки"
 
+class Subscription(models.Model):
+    cuors_fk = models.ForeignKey(Cours, on_delete=models.CASCADE, null=True, verbose_name='подписка-на-курс')
+    user_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name='подписка-на-курс')
 
-# users/models.py
+    class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'

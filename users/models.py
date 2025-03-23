@@ -6,7 +6,7 @@ from info.models import Cours, Lesson
 
 # Create your models here.
 class User(AbstractUser):
-    username = None
+    username = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(verbose_name='email address', unique=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
