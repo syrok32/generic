@@ -30,3 +30,4 @@ class Payment(models.Model):
     paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Оплаченный урок")
     amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма оплаты")
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, verbose_name="Способ оплаты")
+    link_to_payment = models.URLField(max_length=500, null=True, blank=True)
