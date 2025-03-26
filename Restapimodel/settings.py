@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'users',
     'info',
     'drf_yasg',
+    'django_celery_beat'
 
 )
 
@@ -145,3 +146,15 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+
+
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Конвертация в число
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')  # Булево значение
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')  # Булево значение
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
