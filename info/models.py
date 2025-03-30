@@ -1,7 +1,7 @@
 from django.db import models
 
 from Restapimodel import settings
-
+from .tasks import send_course_update_email
 
 # Create your models here.
 
@@ -18,6 +18,16 @@ class Cours(models.Model):
     class Meta:
         verbose_name = 'курс'
         verbose_name_plural = "курсы"
+
+    def save(self, *args, **kwargs):
+        """Отправляем уведомление подписчикам при обновлении курса"""
+        print('ss')
+        is_update = self.pk is not None
+        super().save(*args, **kwargs)
+
+        if is_update:
+            print('ssd')
+            send_course_update_email.delay(self.id)
 
 
 class Lesson(models.Model):
