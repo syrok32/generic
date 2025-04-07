@@ -153,7 +153,7 @@ CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
 
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Конвертация в число
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  #
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')  # Булево значение
 EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')  # Булево значение
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -167,3 +167,6 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'

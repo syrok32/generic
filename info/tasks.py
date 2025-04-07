@@ -13,7 +13,7 @@ def send_course_update_email(course_id):
     subject = f"Обновление курса: {course.title}"
     message = f"Курс '{course.title}' был обновлён! Проверьте новые материалы на платформе."
     print('fff')
-    from_email = DEFAULT_FROM_EMAIL
+    from_email = DEFAULT_FROM_EMAILa
 
     # Получаем email всех подписчиков курса
     subscribers = Subscription.objects.filter(cuors_fk=course).select_related("user_fk")
