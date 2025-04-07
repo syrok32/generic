@@ -72,6 +72,10 @@ class CourListAPIView(generics.ListAPIView):
     queryset = Cours.objects.all()
     pagination_class = MyPagination
 
+    def get_serializer_context(self):
+        """Передаёт объект запроса в сериализатор"""
+        return {"request": self.request}
+
 
 class CourRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CoursSerializer
