@@ -1,7 +1,7 @@
 from django.db import models
 
 from Restapimodel import settings
-from .tasks import send_course_update_email
+
 
 # Create your models here.
 
@@ -11,6 +11,7 @@ class Cours(models.Model):
     img = models.ImageField(verbose_name="картинка", null=True)
     desc = models.TextField(verbose_name='описание')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,null=True, blank=True, verbose_name="Пользователь")
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.title}'
@@ -27,6 +28,7 @@ class Cours(models.Model):
 
         if is_update:
             print('ssd')
+            from info.tasks import send_course_update_email
             send_course_update_email.delay(self.id)
 
 
