@@ -29,5 +29,9 @@ urlpatterns = [
     path("list/", UserListAPIView.as_view(), name="list"),
     path("update/<int:pk>", UserUpdateAPIView.as_view(), name="update"),
     path("retriew/<int:pk>", UserRetrieveAPIView.as_view(), name="retr"),
-    path("payments/create/", PaymentCreateAPIView.as_view(), name="create-payment"),
+    path(
+        "payments/create/",
+        PaymentCreateAPIView.as_view(),
+        name="create-payment",
+    ),
 ]

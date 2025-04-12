@@ -21,9 +21,15 @@ class CoursTests(APITestCase):
 
         self.create_url = reverse("info:cors-cr")
         self.list_url = reverse("info:cours-list")
-        self.detail_url = reverse("info:cours-ret", kwargs={"pk": self.course.id})
-        self.update_url = reverse("info:cours-det", kwargs={"pk": self.course.id})
-        self.destroy_url = reverse("info:cours-des", kwargs={"pk": self.course.id})
+        self.detail_url = reverse(
+            "info:cours-ret", kwargs={"pk": self.course.id}
+        )
+        self.update_url = reverse(
+            "info:cours-det", kwargs={"pk": self.course.id}
+        )
+        self.destroy_url = reverse(
+            "info:cours-des", kwargs={"pk": self.course.id}
+        )
         self.subscribe_url = reverse("info:sub")
 
     def test_create_course(self):
@@ -89,7 +95,9 @@ class CoursTests(APITestCase):
     def test_unsubscribe_from_course(self):
         self.client.force_authenticate(user=self.owner_user)
 
-        Subscription.objects.create(user_fk=self.owner_user, cuors_fk=self.course)
+        Subscription.objects.create(
+            user_fk=self.owner_user, cuors_fk=self.course
+        )
 
         data = {"cuors_fk": self.course.id}
 

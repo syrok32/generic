@@ -23,7 +23,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("img", models.ImageField(upload_to="", verbose_name="картинка")),
+                (
+                    "img",
+                    models.ImageField(upload_to="", verbose_name="картинка"),
+                ),
                 ("desc", models.TextField(verbose_name="описание")),
             ],
             options={
@@ -44,7 +47,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("desc", models.TextField(verbose_name="описание")),
-                ("img", models.ImageField(upload_to="", verbose_name="картинка")),
+                (
+                    "img",
+                    models.ImageField(upload_to="", verbose_name="картинка"),
+                ),
                 ("video", models.CharField(verbose_name="ссылка")),
                 (
                     "cours",

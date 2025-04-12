@@ -36,9 +36,9 @@ def send_course_update_email(self, course_id):
         message = f"Курс '{course.title}' был обновлён! Проверьте новые материалы на платформе."
 
         # Оптимизированный запрос для получения email подписчиков
-        recipient_list = Subscription.objects.filter(cuors_fk=course).values_list(
-            "user_fk__email", flat=True
-        )
+        recipient_list = Subscription.objects.filter(
+            cuors_fk=course
+        ).values_list("user_fk__email", flat=True)
 
         if not recipient_list:
             logger.info(f"Нет подписчиков для курса {course_id}")
@@ -58,6 +58,8 @@ def send_course_update_email(self, course_id):
         )
 
     except Exception as e:
-        logger.error(f"Ошибка при отправке уведомлений для курса {course_id}: {str(e)}")
+        logger.error(
+            f"Ошибка при отправке уведомлений для курса {course_id}: {str(e)}"
+        )
         # Повторная попытка через 5 минут
         raise self.retry(exc=e, countdown=300)

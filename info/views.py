@@ -20,7 +20,9 @@ class SubscriptionView(APIView):
 
         course_item = get_object_or_404(Cours, id=cuors_fk)
 
-        subs_item = Subscription.objects.filter(user_fk=user_fk, cuors_fk=cuors_fk)
+        subs_item = Subscription.objects.filter(
+            user_fk=user_fk, cuors_fk=cuors_fk
+        )
 
         # Если подписка у пользователя на этот курс есть - удаляем ее
         if subs_item.exists():

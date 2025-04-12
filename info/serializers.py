@@ -28,7 +28,9 @@ class CoursSerializer(serializers.ModelSerializer):
         """Проверяет, подписан ли текущий пользователь на курс"""
         user = self.context.get("request").user
         if user.is_authenticated:
-            return Subscription.objects.filter(user_fk=user, cuors_fk=obj).exists()
+            return Subscription.objects.filter(
+                user_fk=user, cuors_fk=obj
+            ).exists()
         return False
 
 
