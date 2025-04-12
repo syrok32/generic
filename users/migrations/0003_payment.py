@@ -8,21 +8,69 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('info', '0009_delete_payment'),
-        ('users', '0002_alter_user_options_remove_user_username_user_avatar_and_more'),
+        ("info", "0009_delete_payment"),
+        ("users", "0002_alter_user_options_remove_user_username_user_avatar_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('payment_date', models.DateTimeField(auto_now_add=True, verbose_name='Дата опла')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Сумма оплаты')),
-                ('payment_method', models.CharField(choices=[('cash', 'Наличные'), ('transfer', 'Перевод на счет')], max_length=20, verbose_name='Способ оплаты')),
-                ('paid_course', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='info.cours', verbose_name='Оплаченный курс')),
-                ('paid_lesson', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='info.lesson', verbose_name='Оплаченный урок')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "payment_date",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Дата опла"),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Сумма оплаты"
+                    ),
+                ),
+                (
+                    "payment_method",
+                    models.CharField(
+                        choices=[("cash", "Наличные"), ("transfer", "Перевод на счет")],
+                        max_length=20,
+                        verbose_name="Способ оплаты",
+                    ),
+                ),
+                (
+                    "paid_course",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="info.cours",
+                        verbose_name="Оплаченный курс",
+                    ),
+                ),
+                (
+                    "paid_lesson",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="info.lesson",
+                        verbose_name="Оплаченный урок",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь",
+                    ),
+                ),
             ],
         ),
     ]

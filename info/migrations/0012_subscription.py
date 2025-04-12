@@ -8,21 +8,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('info', '0011_cours_user_lesson_user'),
+        ("info", "0011_cours_user_lesson_user"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Subscription',
+            name="Subscription",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cuors_fk', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='info.cours', verbose_name='подписка-на-курс')),
-                ('user_fk', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='подписка-на-курс')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "cuors_fk",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="info.cours",
+                        verbose_name="подписка-на-курс",
+                    ),
+                ),
+                (
+                    "user_fk",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="подписка-на-курс",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'подписка',
-                'verbose_name_plural': 'подписки',
+                "verbose_name": "подписка",
+                "verbose_name_plural": "подписки",
             },
         ),
     ]
