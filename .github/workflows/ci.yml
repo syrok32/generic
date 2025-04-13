@@ -32,6 +32,7 @@ jobs:
         ports:
           - 5432:5432
     env:
+      ENGINE: django.db.backends.postgresql
       NAME: project4
       USER: postgres
       PASSWORD: 202054
