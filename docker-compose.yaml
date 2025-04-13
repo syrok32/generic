@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    image: your_dockerhub_username/myapp:latest
     command: sh -c "python manage.py collectstatic --noinput && gunicorn Restapimodel.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/code

@@ -93,6 +93,10 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Write .env on server
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/home/youruser/app/.env
       - name: Deploy
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
@@ -101,12 +105,3 @@ jobs:
           docker rm myapp || true
           docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           EOF
-
-
-
-
-
-
-
-
-          
