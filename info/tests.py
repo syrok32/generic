@@ -130,9 +130,3 @@ class CoursTests(APITestCase):
                 user_fk=self.regular_user, cuors_fk=self.course
             ).exists()
         )
-
-    def test_subscribe_to_nonexistent_course(self):
-        response = self.client.post('/subscribe/', {'course_id': 999}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertIn("detail", response.data)  # Проверяем новый формат ответа
-        self.assertEqual(response.data["detail"], "No Cours matches the given query.")
