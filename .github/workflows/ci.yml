@@ -31,6 +31,14 @@ jobs:
           POSTGRES_DB: project4
         ports:
           - 5432:5432
+    env:
+      DB_NAME: project4
+      DB_USER: postgres
+      DB_PASSWORD: 202054
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DEBUG: true
+      CELERY_BROKER_URL: redis://127:0:0:1:6379/1
 
     steps:
       - name: Check out code
