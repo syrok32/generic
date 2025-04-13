@@ -89,19 +89,26 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: setup up SSH
+      - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
-      - name: Write .env on server
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Copy .env to server
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
-          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/home/youruser/app/.env
+          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/.env
+
       - name: Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-          docker stop myapp || true
-          docker rm myapp || true
-          docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            docker stop myapp || true
+            docker rm myapp || true
+            docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           EOF
