@@ -30,9 +30,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "payment_date",
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name="Дата опла"
-                    ),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Дата опла"),
                 ),
                 (
                     "amount",

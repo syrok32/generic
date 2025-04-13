@@ -18,9 +18,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="lesson",
             name="img",
-            field=models.ImageField(
-                null=True, upload_to="", verbose_name="картинка"
-            ),
+            field=models.ImageField(null=True, upload_to="", verbose_name="картинка"),
         ),
         migrations.AlterField(
             model_name="lesson",

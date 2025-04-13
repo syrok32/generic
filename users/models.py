@@ -8,12 +8,8 @@ from info.models import Cours, Lesson
 class User(AbstractUser):
     username = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(verbose_name="email address", unique=True)
-    phone = models.CharField(
-        max_length=20, blank=True, null=True, verbose_name="phone"
-    )
-    city = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="city"
-    )
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="phone")
+    city = models.CharField(max_length=100, blank=True, null=True, verbose_name="city")
     avatar = models.ImageField(
         upload_to="avatars/", blank=True, null=True, verbose_name="foto"
     )
@@ -34,9 +30,7 @@ class Payment(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name="Пользователь"
     )
-    payment_date = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата опла"
-    )
+    payment_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата опла")
     paid_course = models.ForeignKey(
         Cours,
         on_delete=models.CASCADE,

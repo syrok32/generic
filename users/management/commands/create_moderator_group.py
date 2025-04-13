@@ -14,10 +14,6 @@ class Command(BaseCommand):
         moderator_group.permissions.set(permissions)
 
         if created:
-            self.stdout.write(
-                self.style.SUCCESS("Группа 'Модераторы' успешно создана")
-            )
+            self.stdout.write(self.style.SUCCESS("Группа 'Модераторы' успешно создана"))
         else:
-            self.stdout.write(
-                self.style.SUCCESS("Группа 'Модераторы' уже существует")
-            )
+            self.stdout.write(self.style.SUCCESS("Группа 'Модераторы' уже существует"))

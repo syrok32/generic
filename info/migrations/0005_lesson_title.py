@@ -13,9 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="lesson",
             name="title",
-            field=models.CharField(
-                default=2, max_length=150, verbose_name="название"
-            ),
+            field=models.CharField(default=2, max_length=150, verbose_name="название"),
             preserve_default=False,
         ),
     ]
