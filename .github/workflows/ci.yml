@@ -99,16 +99,18 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Copy .env to server
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/.env
+      - name: Create .env from secret
+        run: echo "${{ secrets.ENV_FILE }}" > .env
 
-      - name: Deploy
+      - name: Copy files to server
+        run: |
+          scp .env docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/
+
+      - name: Deploy using docker-compose
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            cd /root/Restapimodel
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-            docker stop myapp || true
-            docker rm myapp || true
-            docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            docker-compose down || true
+            docker-compose up -d --build
           EOF
