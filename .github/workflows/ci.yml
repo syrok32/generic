@@ -88,11 +88,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -103,19 +99,30 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Create .env locally
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-
-      - name: Copy .env and docker-compose.yml to server
+      - name: Copy .env and docker-compose.yaml to server
         run: |
-          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/.env
-          scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/docker-compose.yml
+          scp .env docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/
 
-      - name: Deploy via docker-compose on server
+      - name: Deploy using docker compose
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd /root/Restapimodel
+
+            # Убедимся, что на сервере установлен Docker Compose v2
+            if ! docker compose version &> /dev/null
+            then
+              echo "Installing Docker Compose v2..."
+              sudo curl -SL https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+              sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+
+            # Обновляем образ
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-            docker-compose down || true
-            docker-compose up -d
+
+            # Останавливаем и удаляем старые контейнеры
+            docker compose down || true
+
+            # Запускаем контейнеры с использованием docker compose
+            docker compose up -d
           EOF
