@@ -99,30 +99,33 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Copy .env and docker-compose.yaml to server
+      - name: Create .env from ENV_FILE
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Copy .env and docker-compose.yml to server
         run: |
           scp .env docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/
 
-      - name: Deploy using docker compose
+      - name: Deploy with Docker Compose
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd /root/Restapimodel
 
-            # Убедимся, что на сервере установлен Docker Compose v2
-            if ! docker compose version &> /dev/null
-            then
+            # Проверка и установка docker compose v2, если отсутствует
+            if ! docker compose version &> /dev/null; then
               echo "Installing Docker Compose v2..."
               sudo curl -SL https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
               sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
             fi
 
-            # Обновляем образ
+            # Обновление образа
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
 
-            # Останавливаем и удаляем старые контейнеры
+            # Остановка и удаление текущих контейнеров
             docker compose down || true
 
-            # Запускаем контейнеры с использованием docker compose
+            # Запуск новых контейнеров
             docker compose up -d
           EOF
