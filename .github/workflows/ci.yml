@@ -88,7 +88,11 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -99,18 +103,19 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Create .env from secret
+      - name: Create .env locally
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
-      - name: Copy files to server
+      - name: Copy .env and docker-compose.yml to server
         run: |
-          scp .env docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/
+          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/.env
+          scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/root/Restapimodel/docker-compose.yml
 
-      - name: Deploy using docker-compose
+      - name: Deploy via docker-compose on server
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd /root/Restapimodel
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
             docker-compose down || true
-            docker-compose up -d --build
+            docker-compose up -d
           EOF
