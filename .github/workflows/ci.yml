@@ -98,17 +98,34 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            if [ ! -d "${{ secrets.DEPLOY_DIR }}" ]; then
-              git clone https://github.com/${{ github.repository }} ${{ secrets.DEPLOY_DIR }}
+            set -e
+          
+            DEPLOY_DIR=${{ secrets.DEPLOY_DIR }}
+            REPO=https://github.com/${{ github.repository }}
+            BRANCH=${{ github.ref_name }}
+          
+            # Клонируем репозиторий, если не существует
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              git clone -b "$BRANCH" "$REPO" "$DEPLOY_DIR"
             fi
-            cd ${{ secrets.DEPLOY_DIR }}
+          
+            cd "$DEPLOY_DIR"
+          
+            # Обновляем код
             git fetch origin
-            git reset --hard origin/${{ github.ref_name }}
-
+            git reset --hard origin/"$BRANCH"
+          
+            # Обновляем .env файл
             echo "${{ secrets.ENV_FILE }}" > .env
-
+          
+            # Авторизация в Docker Hub
+            echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          
+            # Обновляем образы и перезапускаем контейнеры
+            docker compose pull
             docker compose down
             docker compose up -d --build
           EOF
+
 
 
