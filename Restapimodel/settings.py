@@ -170,7 +170,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 CELERY_BEAT_SCHEDULE = {
     "send-daily-notifications": {
         "task": "info.tasks.send_course_notification",
-        "schedule": timedelta(minutes=10),  # Каждый день в 9 утра
-        "args": (1,),  # ID курса для отправки
+        "schedule": timedelta(minutes=10),
+        "args": (1,),
     },
 }
