@@ -97,12 +97,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Upload docker-compose.yml
+        run: |
 
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            mkdir -p ~/app
-            cd ~/app
+            cd ~/myapp
           
             # Получаем актуальный docker-compose.yml
             if [ -f docker-compose.yml ]; then
