@@ -98,19 +98,16 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            # Создаём .env файл из секрета
+            mkdir -p ~/myapp
             echo "${{ secrets.ENV_FILE }}" > ~/myapp/.env
-          
+
             cd ~/myapp
-          
-            # Загружаем новый образ
+
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-          
-            # Останавливаем и удаляем текущий контейнер (если есть)
+
             docker stop myapp || true
             docker rm myapp || true
-          
-            # Запускаем контейнер с .env
+
             docker run -d \
               --name myapp \
               --env-file .env \
