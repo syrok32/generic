@@ -98,20 +98,17 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            mkdir -p ~/myapp
-            echo "${{ secrets.ENV_FILE }}" > ~/myapp/.env
+            if [ ! -d "${{ secrets.DEPLOY_DIR }}" ]; then
+              git clone https://github.com/${{ github.repository }} ${{ secrets.DEPLOY_DIR }}
+            fi
+            cd ${{ secrets.DEPLOY_DIR }}
+            git fetch origin
+            git reset --hard origin/${{ github.ref_name }}
 
-            cd ~/myapp
+            echo "${{ secrets.ENV_FILE }}" > .env
 
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-
-            docker stop myapp || true
-            docker rm myapp || true
-
-            docker run -d \
-              --name myapp \
-              --env-file .env \
-              -p 80:8000 \
-              ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            docker compose down
+            docker compose up -d --build
           EOF
+
 
