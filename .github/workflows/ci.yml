@@ -100,22 +100,26 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          # Копируем docker-compose.yml на сервер
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/docker-compose.yml
-
-          # Подключаемся к серверу и запускаем
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            mkdir -p ~/myapp
-            cd ~/myapp
-
-            # Создаём .env из секрета
+            mkdir -p ~/app
+            cd ~/app
+          
+            # Получаем актуальный docker-compose.yml
+            if [ -f docker-compose.yml ]; then
+              mv docker-compose.yml docker-compose.backup
+            fi
+          
+            # Создаем .env из секрета
             echo "${{ secrets.ENV_FILE }}" > .env
-
-            # Логинимся в Docker Hub
-            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-            # Обновляем образы и запускаем контейнеры
+          
+            # Обновляем образ
+            echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
             docker compose pull
-            docker compose up -d
+          
+            # Запускаем/перезапускаем сервисы
+            docker compose down
+            docker compose up -d --force-recreate
+          
+            # Применяем миграции
+            docker compose exec web python manage.py migrate
           EOF
-
