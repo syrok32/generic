@@ -1,6 +1,6 @@
 services:
   web:
-    image: your_dockerhub_username/myapp:latest
+    image: syrok32/myapp-web:latest
     command: sh -c "python manage.py collectstatic --noinput && gunicorn Restapimodel.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/code
@@ -16,8 +16,7 @@ services:
       - backend
 
   nginx:
-    build:
-      context: ./nginx
+    image: syrok32/myapp-nginx:latest
     ports:
       - "80:80"
     volumes:
@@ -27,6 +26,7 @@ services:
       - web
     networks:
       - backend
+
   db:
     image: postgres:17
     environment:
@@ -61,7 +61,7 @@ services:
       retries: 5
 
   celery:
-    build: .
+    image: syrok32/myapp-celery:latest
     command: celery -A Restapimodel worker --loglevel=info
     user: "1000:1000"
     healthcheck:
@@ -84,10 +84,8 @@ services:
     networks:
       - backend
 
-
-
   celery-beat:
-    build: .
+    image: syrok32/myapp-celery-beat:latest
     command: celery -A Restapimodel beat --loglevel=info
     volumes:
       - .:/code
@@ -98,12 +96,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-
     env_file:
       - .env
     networks:
       - backend
-
 
 volumes:
   postgres_data:
