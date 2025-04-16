@@ -90,50 +90,45 @@ jobs:
     needs: build
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Полная история для возможных git-операций
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Verify files exist
+      - name: Verify server structure
         run: |
-          ls -la docker-compose.yml  # Проверяем наличие файла
-          echo ".env content sample:" && head -n 3 .env || echo "No .env yet"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+            ls -la ~/myapp
+          "
 
-      - name: Prepare environment
+      - name: Prepare deployment files
         run: |
-          # Создаем/перезаписываем .env из секретов
+          # Создаем временный .env
           echo "${{ secrets.ENV_FILE }}" > .env
-          chmod 600 .env  # Защищаем файл с переменными
+          chmod 600 .env
 
-      - name: Deploy files to server
+      - name: Sync necessary files
         run: |
-          # Копируем ВСЕ необходимые файлы
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
             ./docker-compose.yml \
             ./.env \
-            ./nginx/ \          # Если есть конфиги nginx
+            ./nginx/ \
             ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/
 
-      - name: Execute deployment
+      - name: Deploy application
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ~/myapp
-
-            # Авторизация в Docker Hub (если нужны приватные образы)
             echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | \
               docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-            # Полный цикл обновления
             docker compose down --remove-orphans
             docker compose pull
-            docker compose up -d --build --wait
+            docker compose up -d --build
 
-            # Очистка (опционально)
-            docker image prune -af
+            # Проверка статуса
+            docker compose ps
           EOF
