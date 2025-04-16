@@ -90,34 +90,50 @@ jobs:
     needs: build
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Полная история для возможных git-операций
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy to Server
+      - name: Verify files exist
         run: |
-          # Создаем временные файлы
-          echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+          ls -la docker-compose.yml  # Проверяем наличие файла
+          echo ".env content sample:" && head -n 3 .env || echo "No .env yet"
+
+      - name: Prepare environment
+        run: |
+          # Создаем/перезаписываем .env из секретов
           echo "${{ secrets.ENV_FILE }}" > .env
+          chmod 600 .env  # Защищаем файл с переменными
 
-          # Копируем файлы на сервер
-          scp -o StrictHostKeyChecking=no docker-compose.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/
+      - name: Deploy files to server
+        run: |
+          # Копируем ВСЕ необходимые файлы
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
+            ./docker-compose.yml \
+            ./.env \
+            ./nginx/ \          # Если есть конфиги nginx
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/
 
-          # Выполняем команды на сервере
+      - name: Execute deployment
+        run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ~/myapp
 
-            # Авторизация в Docker Hub
-            echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+            # Авторизация в Docker Hub (если нужны приватные образы)
+            echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | \
+              docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-            # Останавливаем и удаляем старые контейнеры
-            docker compose down || true
-
-            # Запускаем новые контейнеры
+            # Полный цикл обновления
+            docker compose down --remove-orphans
             docker compose pull
-            docker compose up -d --build
+            docker compose up -d --build --wait
 
-            # Очистка
-            docker system prune -f
+            # Очистка (опционально)
+            docker image prune -af
           EOF
