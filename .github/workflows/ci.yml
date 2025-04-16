@@ -90,21 +90,34 @@ jobs:
     needs: build
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
       - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.4
+        uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to Server
         run: |
+          # Создаем временные файлы
+          echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+          # Копируем файлы на сервер
+          scp -o StrictHostKeyChecking=no docker-compose.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/
+
+          # Выполняем команды на сервере
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd ${{ secrets.DEPLOY_DIR }}
-            git checkout develop
-            git pull
-            sudo docker-compose pull
-            sudo docker-compose down
-            sudo docker-compose up -d --build
+            cd ~/myapp
+
+            # Авторизация в Docker Hub
+            echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+            # Останавливаем и удаляем старые контейнеры
+            docker compose down || true
+
+            # Запускаем новые контейнеры
+            docker compose pull
+            docker compose up -d --build
+
+            # Очистка
+            docker system prune -f
           EOF
