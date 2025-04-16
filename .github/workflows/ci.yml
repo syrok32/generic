@@ -120,7 +120,7 @@ jobs:
           rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
             ./docker-compose.yml \
             ./.env \
-            ./nginx/ \
+            ./nginx \
             ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/myapp/
 
       - name: Deploy application
