@@ -7,40 +7,71 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('info', '0002_moto'),
+        ("info", "0002_moto"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Cours',
+            name="Cours",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('img', models.ImageField(upload_to='', verbose_name='картинка')),
-                ('desc', models.TextField(verbose_name='описание')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "img",
+                    models.ImageField(upload_to="", verbose_name="картинка"),
+                ),
+                ("desc", models.TextField(verbose_name="описание")),
             ],
             options={
-                'verbose_name': 'курс',
-                'verbose_name_plural': 'курсы',
+                "verbose_name": "курс",
+                "verbose_name_plural": "курсы",
             },
         ),
         migrations.CreateModel(
-            name='Lesson',
+            name="Lesson",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('desc', models.TextField(verbose_name='описание')),
-                ('img', models.ImageField(upload_to='', verbose_name='картинка')),
-                ('video', models.CharField(verbose_name='ссылка')),
-                ('cours', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='info.cours', verbose_name='курс')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("desc", models.TextField(verbose_name="описание")),
+                (
+                    "img",
+                    models.ImageField(upload_to="", verbose_name="картинка"),
+                ),
+                ("video", models.CharField(verbose_name="ссылка")),
+                (
+                    "cours",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="info.cours",
+                        verbose_name="курс",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'урок',
-                'verbose_name_plural': 'уроки',
+                "verbose_name": "урок",
+                "verbose_name_plural": "уроки",
             },
         ),
         migrations.DeleteModel(
-            name='Car',
+            name="Car",
         ),
         migrations.DeleteModel(
-            name='Moto',
+            name="Moto",
         ),
     ]
