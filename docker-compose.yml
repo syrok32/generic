@@ -84,8 +84,6 @@ services:
     networks:
       - backend
 
-
-
   celery-beat:
     build: .
     command: celery -A Restapimodel beat --loglevel=info
