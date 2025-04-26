@@ -24,3 +24,5 @@ COPY . .
 
 # Команда запуска (может быть переопределена в docker-compose)
 EXPOSE 8000
+
+CMD ["gunicorn", "Restapimodel.wsgi:application", "--bind", "0.0.0.0:8000"]

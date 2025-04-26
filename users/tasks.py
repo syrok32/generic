@@ -14,5 +14,3 @@ def is_online_active():
             if timezone.now() - user.last_login > timedelta(days=30):
                 user.is_active = False
                 user.save()
-
-

@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('info', '0004_alter_lesson_desc_alter_lesson_img_and_more'),
+        ("info", "0004_alter_lesson_desc_alter_lesson_img_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='lesson',
-            name='title',
-            field=models.CharField(default=2, max_length=150, verbose_name='название'),
+            model_name="lesson",
+            name="title",
+            field=models.CharField(default=2, max_length=150, verbose_name="название"),
             preserve_default=False,
         ),
     ]
